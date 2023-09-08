@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  <script src="https://d3js.org/d3.v6.min.js"></script>
+</head>
+
+<body>
+  <div class="container plot_graph">
+    <h2>Net Profit Rate</h2>
+    <div id="net_profit_chart"></div>
+
+  </div>
+  <div class="container plot_graph">
+    <h2>Current Rate</h2>
+    <div id="cur_rate_chart"></div>
+
+  </div>
+  <div class="container plot_graph">
+    <h2>Quick Ratio</h2>
+    <div id="q_ratio_chart"></div>
+
+  </div>
+  <div class="container plot_graph">
+    <h2>Asset Turnover</h2>
+    <div id="Asset_T_chart"></div>
+
+  </div>
+  <div class="container plot_graph">
+    <h2>Debt to Assets</h2>
+    <p id="demo"></p>
+    <div id="Debt_to_Assets"></div>
+
+  </div>
+
+  <script src="https://cdn.plot.ly/plotly-latest.min.js">
+
+    function plot_now(data, container_id, d_title) {
+
+      const trainData = data.plotData.train_data;
+      const forecastData = data.plotData.forecast_data;
+      const testData = data.plotData.test_data;
+
+      // Create traces for the plot
+      const trainTrace = {
+        x: trainData.index,
+        y: trainData.values,
+        mode: 'lines',
+        name: 'Training'
+      };
+
+      const forecastTrace = {
+        x: forecastData.index,
+        y: forecastData.values,
+        mode: 'lines',
+        name: 'Forecast'
+      };
+
+      const testTrace = {
+        x: testData.index,
+        y: testData.values,
+        mode: 'lines',
+        name: 'Actual'
+      };
+
+      // Create the plot layout
+      const layout = {
+        title: d_title,
+        xaxis: { title: 'Time' },
+        yaxis: { title: 'Values' },
+        showlegend: true
+      };
+
+      const plotting_data = [trainTrace, forecastTrace, testTrace];
+
+      Plotly.newPlot(container_id, plotting_data, layout);
+
+    };
+
+    if (data_present) {
+
+      const netProfitData = JSON.parse('{{ NP_data | tojson | safe }}');
+      plot_now(netProfitData, 'net_profit_chart', 'Net Profit');
+
+      const currentRateData = JSON.parse('{{ QR_data | tojson | safe }}');
+      plot_now(currentRateData, 'cur_rate_chart', 'Current Rate');
+
+      const quickRatioData = JSON.parse('{{ CR_data | tojson | safe }}');
+      plot_now(quickRatioData, 'q_ratio_chart', 'Quick Ratio');
+
+      const assetTurnover = JSON.parse('{{ AT_data | tojson | safe }}');
+      plot_now(assetTurnover, 'Asset_T_chart', 'Asset Turnover');
+
+      const debtToAssets = JSON.parse('{{ DA_data | tojson | safe }}');
+      plot_now(debtToAssets, 'Debt_to_Assets', 'Debt to Assets');
+
+      try {
+        adddlert("Still nothing!");
+      }
+      catch (err) {
+        document.getElementById("demo").innerHTML = err.message;
+      }
+
+
+    }
+    else {
+
+      try {
+        adddlert("Welcome guest!");
+      }
+      catch (err) {
+        document.getElementById("demo").innerHTML = err.message;
+      }
+    };
+  </script>
+
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+    integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js"
+    integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"
+    integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+    crossorigin="anonymous"></script>
+</body>
+
+</html>

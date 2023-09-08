@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Board Of Investments</title>
+    <link rel="icon" href="{{ url_for('static', filename='img/boi.jpg')}}" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css')}}">
+    <style>
+        .form-group {
+            padding-right: 35px;
+        }
+
+        .carousel-item img {
+            height: 800px;
+            object-fit: cover;
+            object-position: 25% 25%;
+            filter: brightness(50%);
+        }
+
+        .navlist {
+            font-size: large;
+            font-weight: bold;
+        }
+
+        .nav-item {
+            padding-right: 25px;
+        }
+
+
+        table {
+            border-collapse: collapse;
+            width: 80%;
+            justify-content: center;
+            margin-left: 12%;
+            margin-bottom: 100px;
+        }
+
+        th,
+        td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="#"><img src="{{ url_for('static', filename='img/boi_nav.png')}}" alt=""
+                style="max-height: 50px;">
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown"
+            aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavDropdown" style="display: flex; justify-content: right;">
+            <ul class="navbar-nav">
+
+                <li class="nav-item">
+                    <a class="nav-link navlist" href="{{ url_for('index') }}">Home <span
+                            class="sr-only">(current)</span></a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link navlist" href="{{ url_for('forcast') }}">View Forcastings</a>
+                </li>
+
+                <li class="nav-item active">
+                    <a class="nav-link navlist" href="{{ url_for('existing_data') }}">Current Business Records</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+
+    <div class="container" id="accordion">
+        <div class="card">
+            <div class="card-header" id="headingOne">
+                <h5 class="mb-0">
+                    <button class="btn collapsed" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true"
+                        aria-controls="collapseOne">
+                        Insert Yearly Data
+                    </button>
+                </h5>
+            </div>
+
+            <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
+                <div class="card-body">
+                    <div class="container-fluid" style="margin-top: 80px; padding-right: 100px; padding-left: 100px;">
+                        <form>
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label for="ref">Reference Number</label>
+                                    <input type="text" class="form-control" id="ref" placeholder="ex: 0003-1992-GENN">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="fda">FA_Cost</label>
+                                    <input type="number" class="form-control" id="fda" placeholder="Enter FDA Amount">
+                                </div>
+                                <div class="form-group">
+                                    <label for="fda">WDA_FA</label>
+                                    <input type="number" class="form-control" id="wda" placeholder="Enter WDA Amount">
+                                </div>
+                                <div class="form-group">
+                                    <label for="fda">D_Expense</label>
+                                    <input type="number" class="form-control" id="wda" placeholder="Enter WDA Amount">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="fda">Current Assets</label>
+                                    <input type="number" class="form-control" id="fda" placeholder="Enter FDA Amount">
+                                </div>
+                                <div class="form-group">
+                                    <label for="fda">Current Liabilities</label>
+                                    <input type="number" class="form-control" id="wda" placeholder="Enter WDA Amount">
+                                </div>
+                                <div class="form-group">
+                                    <label for="fda">Stock inventory</label>
+                                    <input type="number" class="form-control" id="wda" placeholder="Enter WDA Amount">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label for="inputDate">Date Input</label>
+                                    <input type="date" class="form-control" id="inputDate" placeholder="Select a date">
+                                </div>
+                                <div class="form-group col-md-4">
+                                    <label for="inputState">State</label>
+                                    <select id="inputState" class="form-control">
+                                        <option selected>Choose...</option>
+                                        <option>...</option>
+                                    </select>
+                                </div>
+                                <div class="form-group col-md-2">
+                                    <label for="inputZip">Zip</label>
+                                    <input type="text" class="form-control" id="inputZip">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="gridCheck">
+                                    <label class="form-check-label" for="gridCheck">
+                                        Check me out
+                                    </label>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header" id="headingTwo">
+                <h5 class="mb-0">
+                    <button class="btn collapsed" data-toggle="collapse" data-target="#collapseTwo"
+                        aria-expanded="false" aria-controls="collapseTwo">
+                        View Company Data
+                    </button>
+                </h5>
+            </div>
+            <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
+                <div class="card-body">
+                    <h2>Data View from SQL database upon company selection</h2>
+                    <form action="{{ url_for('displayTables')}}" method="POST">
+                        <div class="form-group">
+                            <label for="ref">Company Reference Number : </label>
+                            <input type="text" id="ref" name="ref" class="form-control"
+                                placeholder="ex: 0003-1992-GENN">
+                            <button type="submit" id="submit" class="btn btn-primary "
+                                style="width:100%; margin: 10px auto;">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="container-fluid">
+        {% if data is none %}
+        <p style="text-align: center;">Please input a Reference Number.</p>
+        {% else %}
+        <h4 style="padding: 45px; text-align: center;">Company Details For Ref No: {{ ref}}</h4>
+        <table>
+            <thead>
+                <tr>
+                    {% for column in data.columns %}
+                    <th>{{ column }}</th>
+                    console.log('not working')
+                    <th>{{ data.columns[0]}}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in data.values %}
+                <tr>
+                    {% for value in row %}
+                    <td>{{ value }}</td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+
+        {% endif %}
+        {{data|safe}}
+    </div>
+
+
+
+
+
+
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>

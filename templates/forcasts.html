@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Board Of Investments</title>
+    <link rel="icon" href="{{ url_for('static', filename='img/boi.jpg') }}" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+    <style>
+
+    </style>
+</head>
+<style>
+    .container {
+        margin-top: 50px;
+    }
+
+    .carousel-item img {
+        height: 800px;
+        object-fit: cover;
+        object-position: 25% 25%;
+        filter: brightness(50%);
+    }
+
+    .navlist {
+        font-size: large;
+        font-weight: bold;
+    }
+
+    .nav-item {
+        padding-right: 25px;
+    }
+
+    .plot_graph {
+        padding-bottom: 100px;
+    }
+
+    .graph_p {
+        text-align: center;
+        font-weight: bolder;
+        font-style: italic;
+
+    }
+    .divRuler{
+        background-color: blue;
+
+    }
+</style>
+
+</head>
+
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand" href="#"><img src="{{ url_for('static', filename='img/boi_nav.png') }}" alt=""
+                                          style="max-height: 50px;">
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown"
+            aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavDropdown" style="display: flex; justify-content: right;">
+        <ul class="navbar-nav">
+
+            <li class="nav-item ">
+                <a class="nav-link navlist" href="{{ url_for('index') }}">Home <span
+                        class="sr-only">(current)</span></a>
+            </li>
+
+            <li class="nav-item active">
+                <a class="nav-link navlist" href="{{ url_for('forcast') }}">View Forcastings</a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link navlist" href="{{ url_for('existing_data') }}">Current Business Records</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<div class="container">
+    <form action="{{ url_for('ref_Input') }}" method="POST">
+        <div class="form-group">
+            <label for="ref">Company Reference Number : </label>
+            <input type="text" id="ref" name="ref" class="form-control" placeholder="ex: 0003-1992-GENN">
+            <button type="submit" id="submit" class="btn btn-primary "
+                    style="width:100%; margin: 10px auto;">Submit
+            </button>
+        </div>
+    </form>
+</div>
+<hr class="divRuler">
+
+
+<div class="container plot_graph">
+    <h3>Net Profit</h3>
+    <div id="net_profit_chart"></div>
+    <div>
+        <p id="profit" class="graph_p"></p>
+    </div>
+
+</div>
+<hr class="divRuler">
+<div class="container plot_graph">
+    <h3>Current Ratio</h3>
+    <div id="cur_rate_chart"></div>
+    <div>
+        <p id="cr" class="graph_p"></p>
+    </div>
+
+</div>
+<hr class="divRuler">
+<div class="container plot_graph">
+    <h3>Quick Ratio</h3>
+    <div id="q_ratio_chart"></div>
+    <div>
+        <p id="qr" class="graph_p"></p>
+    </div>
+
+</div>
+<hr class="divRuler">
+<div class="container plot_graph">
+    <h3>Asset Turnover</h3>
+    <div id="Asset_T_chart"></div>
+    <div>
+        <p id="at" class="graph_p"></p>
+    </div>
+
+
+</div>
+<hr class="divRuler">
+<div class="container plot_graph">
+    <h3>Debt to Assets</h3>
+
+    <div id="Debt_to_Assets"></div>
+    <div>
+        <p id="da" class="graph_p"></p>
+    </div>
+
+</div>
+
+<hr class="divRuler">
+
+<script>
+
+    function plot_now(data, container_id, d_title) {
+
+        const trainData = data.train_data;
+        const forecastData = data.forecast_data;
+        const testData = data.test_data;
+        const combinedData = data.combined_data;
+        console.log(data)
+
+        // Create traces for the plot
+        const trainTrace = {
+            x: trainData.index,
+            y: trainData.values,
+            mode: 'lines',
+            name: 'Training'
+        };
+
+        const forecastTrace = {
+            x: forecastData.index,
+            y: forecastData.values,
+            mode: 'lines',
+            name: 'Forecast'
+        };
+
+        const testTrace = {
+            x: testData.index,
+            y: testData.values,
+            mode: 'lines',
+            name: 'Actual'
+        };
+        const combinedTrace = {
+            x: combinedData.index,
+            y: combinedData.values,
+            mode: 'lines',
+            name: 'Combined',
+            fill: 'tozeroy',
+            line: {color: 'red'},
+            fillcolor: 'rgba(255, 127, 127, 0.2)' // Add this property to fill between trace and x-axis
+        };
+
+
+        // Create the plot layout
+        const layout = {
+            title: d_title,
+            xaxis: {
+                title: 'Time',
+                font: {
+                    size: 22
+                },
+                tickfont: {
+                    size: 14,
+                    bold: 'bold'
+                }
+            },
+            yaxis: {
+                title: 'Values',
+                font: {
+                    size: 22
+                },
+                tickfont: {
+                    size: 14,
+                    bold: 'bold'
+                }
+            },
+            showlegend: true
+        };
+
+        const plotting_data = [trainTrace, forecastTrace, testTrace, combinedTrace];
+
+        Plotly.newPlot(container_id, plotting_data, layout);
+
+    };
+
+
+    const netProfitData = JSON.parse('{{ NP_data | tojson | safe }}');
+    plot_now(netProfitData, 'net_profit_chart', 'Net Profit');
+
+    const currentRateData = JSON.parse('{{ QR_data | tojson | safe }}');
+    plot_now(currentRateData, 'cur_rate_chart', 'Current Rate');
+
+    const quickRatioData = JSON.parse('{{ CR_data | tojson | safe }}');
+    plot_now(quickRatioData, 'q_ratio_chart', 'Quick Ratio');
+
+    const assetTurnover = JSON.parse('{{ AT_data | tojson | safe }}');
+    plot_now(assetTurnover, 'Asset_T_chart', 'Asset Turnover');
+
+    const debtToAssets = JSON.parse('{{ DA_data | tojson | safe }}');
+    plot_now(debtToAssets, 'Debt_to_Assets', 'Debt to Assets');
+
+    function status(data, pId) {
+        const forecastData = data.forecast_data;
+        const combinedData = data.combined_data;
+
+        const com_last = combinedData.values[combinedData.values.length - 1];
+        const for_last = forecastData.values[forecastData.values.length - 1];
+        console.log(com_last);
+        console.log(for_last);
+        const pos_feedback = "+ Status:  Positive Performance "
+        const neg_feedback = "- Status Poor Performance"
+
+        const outputParagraph = document.getElementById(pId);
+        if (for_last > com_last) {
+            outputParagraph.textContent = pos_feedback;
+            outputParagraph.style.color = "green";
+        } else {
+            outputParagraph.textContent = neg_feedback;
+            outputParagraph.style.color = "red";
+        }
+        ;
+
+
+    }
+
+    status(netProfitData, 'profit');
+    status(currentRateData, 'cr');
+    status(quickRatioData, 'qr');
+    status(assetTurnover, 'at');
+    status(debtToAssets, 'da');
+
+</script>
+
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>
